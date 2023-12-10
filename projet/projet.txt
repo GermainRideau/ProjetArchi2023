@@ -1,0 +1,83 @@
+inc R
+dec R
+jmp I
+isz R
+stp I/R :)
+
+jpm 3   010 00011	0x43
+inc 0	000 00000	0x00
+dec 1	001 00001	0x21
+isz 1	011 00001	0x61
+jmp 1	010 00100	0x44
+stp	100 X		0x80
+
+ RAM stocke les instructions en contigu à partir de 0
+ : addresse + 1 == addresse de la prochaine instruction si pas de saut!
+ sinon prochaine addresse == imm5 de saut.
+ 
+ 
+ op = 3bits q2q1q0
+ 
+ inc_or_dec = -q1 & q0
+ is_jmp = q1 & -q0
+ is_zero = q1 & q0
+ stp = q2
+ enableWrite = -q2 & -q1
+ 
+ inc 1 : 0000 00100
+ twotimes
+ 
+ 64 43 80 24 08 08 40
+ 
+ 
+ 0 : 011 00100 		isZ 1; 
+ 1 : 010 00011		jmp 3;	
+ 2 : 100 00000 		stp;
+ 3 : 001 00100		dec 1;	
+ 4 : 000 01000		inc 2;			
+ 5 : 000 01000		inc 2;
+ 6 : 010 00000		jmp 0;
+ 
+ initialiser le premier registre à une valeur autre que 0
+ 
+ val qui demux dans les entrées = pas bien, met tous les registre à 0
+ 
+ val doit aller dans le registre choisit par ri
+ les autres ne bougent pas
+ 
+ SOLUTION: demux de enableWrite avec ri en selection ! valeur donnée pour tous les registres
+ 
+ 
+ 
+ instruction en plus : 
+ 
+ load address : R
+ ri1 prends ri2 en valeur.
+ 
+ jmpz i si eq0 et isjmp alors imm5
+ opcode 101 type I
+ 
+ select registre (il faut que enablewrite soit faux)
+ 
+ load registre X dans registre courant
+ 
+ twotimes(4)
+ inc 1; 0	04
+ inc 1; 1	04
+ inc 1; 2	04
+ inc 1; 3	04
+ isZ 1; 4	64
+ jmp 7;	5	47
+ stp;   6	80
+ dec 1;	7	24
+ inc 2;	8	08	
+ inc 2; 9	08
+ jmp 4; 10	44
+ 
+ 
+ 
+ 
+ isLA 	111 ri
+ isJMPZ 101 adr
+ 
+ 
